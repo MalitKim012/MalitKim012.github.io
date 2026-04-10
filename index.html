@@ -1,29 +1,47 @@
-<!DOCTYPE HTML>
 <html>
-    <head>
-<link rel="stylesheet" href="MalitKim012.github.io/style.css">
+
+<head>
+    <style>
+        body {
+            background: linear-gradient(to bottom right, #F0FFF0, #FFF8DC);
+        }
+        .box {
+            width: 200px;
+            background: linear-gradient(to bottom right, #90EE90, #FFDAB9);
+            border: none;
+            padding: 10px;
+            margin: 0 auto;
+            text-align: center;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        h1, h2, p {
+            text-align: center;
+        }
+        body {
+            text-align: center;
+        
+        }
+    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MIS System</title>
 </head>
-    <body>
-<div class="envelope-wrapper">
-    <div id="envelope" class="close">
-        <div class="front flap"></div>
-        <div class="front pocket"></div>
-        <div class="letter">
-            <div class="words line1"></div>
-            <div class="words line2"></div>
-            <div class="words line3"></div>
-            <div class="words line4"></div>
-        </div>
-        <div class="hearts">
-            <div class="heart a1"></div>
-            <div class="heart a2"></div>
-            <div class="heart a3"></div>
-        </div>
-    </div>
-</div>
-<div class="reset">
-    <button id="open">Open</button>
-    <button id="reset">Reset</button>
-</div>
-    </body>
-    <html>
+<body>
+    <h1>Welcome to the MIS System</h1>
+    <p>This is the main page of the Management Information System.</p>
+   <div class="box"><h2>login</h2>
+    <form action="/login" method="post">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required><br><br>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required><br><br>
+        <input type="submit" value="Login">
+    </form>
+</div> 
+</body>
+</html>

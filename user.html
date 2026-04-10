@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Landing Page - MIS System</title>
+    <style>
+        body {
+            background: linear-gradient(to bottom right, #F0FFF0, #FFF8DC);
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        .header {
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 0 0 15px 15px;
+        }
+        .tabs {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .tab-buttons {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .tab-button {
+            background: linear-gradient(to bottom right, #90EE90, #FFDAB9);
+            border: none;
+            border-radius: 15px 15px 0 0;
+            padding: 10px 20px;
+            margin: 0 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        .tab-button:hover, .tab-button.active {
+            background: linear-gradient(to bottom right, #77DD77, #FFEBCD);
+        }
+        .tab-content {
+            background: rgba(240, 240, 240, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            padding: 20px;
+            min-height: 300px;
+        }
+        .tab-pane {
+            display: none;
+        }
+        .tab-pane.active {
+            display: block;
+        }
+        .menu {
+            background: rgba(240, 240, 240, 0.9);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            border-radius: 20px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+            padding: 25px;
+            margin-top: 20px;
+        }
+        .menu h3 {
+            margin-top: 0;
+            color: #222;
+            letter-spacing: 0.5px;
+        }
+        .menu ul {
+            list-style-type: none;
+            padding: 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 18px;
+            margin: 0;
+        }
+        .menu-item {
+            background: rgba(240, 240, 240, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 18px;
+            box-shadow: 0 12px 25px rgba(0,0,0,0.08);
+            padding: 18px;
+            transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+            backdrop-filter: blur(12px);
+        }
+        .menu-item:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 18px 35px rgba(0,0,0,0.14);
+            background: rgba(255, 255, 255, 0.85);
+        }
+        .menu-item a {
+            display: inline-block;
+            text-decoration: none;
+            color: #0056b3;
+            font-weight: bold;
+            padding: 10px 14px;
+            border-radius: 12px;
+            transition: background 0.3s, color 0.3s;
+        }
+        .menu-item a:hover {
+            background: rgba(0, 86, 179, 0.08);
+            color: #003f7f;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>MIS System - User Portal</h1>
+        <p id="welcome-user" style="margin: 10px 0 0; font-size: 1.1rem; color: #555;"></p>
+    </div>
+    <div class="tabs">
+        <div class="tab-buttons">
+            <button class="tab-button active" onclick="showTab('incoming')">Incoming</button>
+            <button class="tab-button" onclick="showTab('pullout')">Pull Out</button>
+            <button class="tab-button" onclick="showTab('request')">Request</button>
+            <button class="tab-button" onclick="showTab('report')">Report</button>
+        </div>
+        <div class="tab-content">
+            <div id="incoming" class="tab-pane active">
+                <h2>Incoming</h2>
+                <p>View and manage incoming items or documents.</p>
+                <div class="menu">
+                    <h3>Menu</h3>
+                    <ul>
+                        <li class="menu-item"><a href="/view-incoming">View Incoming</a></li>
+                        <li class="menu-item"><a href="/incoming-history">Incoming History</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div id="pullout" class="tab-pane">
+                <h2>Pull Out</h2>
+                <p>Handle pull out requests and processes.</p>
+                <div class="menu">
+                    <h3>Menu</h3>
+                    <ul>
+                        <li class="menu-item"><a href="/create-pullout">Create New Pull Out</a></li>
+                        <li class="menu-item"><a href="/view-pullout">View Pull Out</a></li>
+                        <li class="menu-item"><a href="/pullout-history">Pull Out History</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div id="request" class="tab-pane">
+                <h2>Request</h2>
+                <p>Submit and track your requests.</p>
+                <!-- Add content here -->
+            </div>
+            <div id="report" class="tab-pane">
+                <h2>Report</h2>
+                <p>Generate and view reports.</p>
+                <!-- Add content here -->
+            </div>
+        </div>
+    </div>
+    <div class="footer">
+        <p>&copy; 2026 MIS System. All rights reserved. | <a href="/">Logout</a></p>
+    </div>
+
+    <script>
+        function showTab(tabId) {
+            // Hide all tab panes
+            const panes = document.querySelectorAll('.tab-pane');
+            panes.forEach(pane => pane.classList.remove('active'));
+
+            // Remove active class from buttons
+            const buttons = document.querySelectorAll('.tab-button');
+            buttons.forEach(button => button.classList.remove('active'));
+
+            // Show selected tab
+            document.getElementById(tabId).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function getQueryParam(name) {
+            const params = new URLSearchParams(window.location.search);
+            return params.get(name);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const username = getQueryParam('username');
+            if (username) {
+                const welcome = document.getElementById('welcome-user');
+                welcome.textContent = `Welcome, ${decodeURIComponent(username)}.`;
+            }
+        });
+    </script>
+</body>
+</html>
