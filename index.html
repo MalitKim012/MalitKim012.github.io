@@ -33,16 +33,17 @@
         z-index: 1;
     }
 
+    /* ✅ LANDSCAPE CONTAINER */
     .container {
         position: relative;
         z-index: 2;
-        width: 90%;
-        max-width: 500px;
-        margin: 80px auto;
+        width: 95%;
+        max-width: 1100px;
+        margin: 40px auto;
         background: rgba(255, 255, 255, 0.15);
         backdrop-filter: blur(12px);
         border-radius: 16px;
-        padding: 30px;
+        padding: 25px;
         border: 1px solid rgba(255, 255, 255, 0.3);
         box-shadow: 0 8px 32px rgba(0,0,0,0.2);
     }
@@ -51,7 +52,7 @@
 
     label {
         display: block;
-        margin-top: 15px;
+        margin-top: 10px;
         color: white;
     }
 
@@ -81,11 +82,33 @@
         background: #ff7043;
     }
 
+    /* ✅ LANDSCAPE SECTION LAYOUT */
     .section {
-        border: 1px solid rgba(255,255,255,0.3);
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
         padding: 15px;
+        border: 1px solid rgba(255,255,255,0.3);
         border-radius: 10px;
         margin-bottom: 20px;
+    }
+
+    /* full width fields */
+    .section .Quantity,
+    .section .Description {
+        grid-column: span 2;
+    }
+
+    /* mobile fallback */
+    @media (max-width: 768px) {
+        .section {
+            grid-template-columns: 1fr;
+        }
+
+        .section .Quantity,
+        .section .Description {
+            grid-column: span 1;
+        }
     }
 </style>
 </head>
@@ -103,26 +126,32 @@
 
 <div class="section">
 
-    <label>Select Equipment</label>
-    <select class="Peripherals" onchange="updateBrand(this)">
-        <option value="">-- Choose an item --</option>
-        <option value="Computer">Computer</option>
-        <option value="Keyboard">Keyboard</option>
-        <option value="Monitor">Monitor</option>
-        <option value="UPS">UPS</option>
-        <option value="Cash Drawer">Cash Drawer</option>
-        <option value="Hard Drive">Hard Drive</option>
-    </select>
+    <div>
+        <label>Select Equipment</label>
+        <select class="Peripherals" onchange="updateBrand(this)">
+            <option value="">-- Choose an item --</option>
+            <option value="Computer">Computer</option>
+            <option value="Keyboard">Keyboard</option>
+            <option value="Monitor">Monitor</option>
+            <option value="UPS">UPS</option>
+            <option value="Cash Drawer">Cash Drawer</option>
+            <option value="Hard Drive">Hard Drive</option>
+        </select>
+    </div>
 
-    <label>BRAND</label>
-    <select class="brand" disabled>
-        <option>Select peripheral first</option>
-    </select>
+    <div>
+        <label>BRAND</label>
+        <select class="brand" disabled>
+            <option>Select peripheral first</option>
+        </select>
+    </div>
 
-    <label>Quantity</label>
-    <input type="number" class="Quantity" min="0"
-    placeholder="Enter quantity"
-    oninput="generateItems(this)">
+    <div class="Quantity">
+        <label>Quantity</label>
+        <input type="number" min="0"
+        placeholder="Enter quantity"
+        oninput="generateItems(this)">
+    </div>
 
     <div class="Description"></div>
 
@@ -132,7 +161,6 @@
 
 <button type="button" class="btn" onclick="addSection()">+ Add Another Peripheral</button>
 <button type="button" class="btn" onclick="exportPDF()">Export to PDF</button>
-<button type="submit" class="btn">Submit</button>
 
 </form>
 </div>
@@ -220,17 +248,14 @@ function generateItems(input) {
 
         const sLabel = document.createElement("label");
         sLabel.textContent = `${selected || "Item"} ${i} Serial`;
-
         const sInput = document.createElement("input");
 
         const dLabel = document.createElement("label");
         dLabel.textContent = `${selected || "Item"} ${i} Description`;
-
         const dInput = document.createElement("input");
 
         const rLabel = document.createElement("label");
         rLabel.textContent = `${selected || "Item"} ${i} Remark`;
-
         const rSelect = document.createElement("select");
 
         ["Good", "Defective", "For Repair"].forEach(r => {
@@ -251,7 +276,7 @@ function generateItems(input) {
     }
 }
 
-/* GROUPED PDF EXPORT */
+/* GROUPED PDF */
 function exportPDF() {
     const { jsPDF } = window.jspdf;
     const pdf = new jsPDF("l", "mm", "a4");
@@ -294,8 +319,8 @@ function exportPDF() {
 
     let y = 25;
 
-    const drawTable = (title, rows) => {
-        if (rows.length === 0) return;
+    const draw = (title, rows) => {
+        if (!rows.length) return;
 
         pdf.setFontSize(12);
         pdf.text(title, 14, y);
@@ -314,9 +339,9 @@ function exportPDF() {
         });
     };
 
-    drawTable("GOOD", grouped["Good"]);
-    drawTable("DEFECTIVE", grouped["Defective"]);
-    drawTable("FOR REPAIR", grouped["For Repair"]);
+    draw("GOOD", grouped["Good"]);
+    draw("DEFECTIVE", grouped["Defective"]);
+    draw("FOR REPAIR", grouped["For Repair"]);
 
     pdf.save("pullout-form-grouped.pdf");
 }
