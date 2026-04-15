@@ -33,7 +33,7 @@
         z-index: 1;
     }
 
-    /* ✅ LANDSCAPE CONTAINER */
+    /* LANDSCAPE CONTAINER */
     .container {
         position: relative;
         z-index: 2;
@@ -279,7 +279,7 @@ function generateItems(input) {
 /* GROUPED PDF */
 function exportPDF() {
     const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF("l", "mm", "a4");
+    const pdf = new jsPDF("l", "mm", "letter");
 
     const grouped = {
         "Good": [],
