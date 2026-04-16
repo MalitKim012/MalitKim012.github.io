@@ -29,7 +29,7 @@ body {
 
 /* SECTION */
 .section {
-    position: relative; /* ✅ needed for X positioning */
+    position: relative;
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 15px;
@@ -44,14 +44,14 @@ body {
     grid-column: span 2;
 }
 
-/* GRID */
+/* GRID FIX */
 .Description {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 15px;
 }
 
-/* ITEM */
+/* ITEM CARD */
 .item-group {
     background: rgba(255,255,255,0.15);
     padding: 12px;
@@ -80,7 +80,7 @@ input, select {
     cursor: pointer;
 }
 
-/* ✅ NEW REMOVE BUTTON STYLE (X TOP RIGHT) */
+/* REMOVE BUTTON (X) */
 .remove-btn {
     position: absolute;
     top: 8px;
@@ -119,9 +119,9 @@ input, select {
 
 <div id="sections">
 
+<!-- FIRST SECTION (NO REMOVE BUTTON VISIBLE) -->
 <div class="section">
 
-<!-- ✅ ONLY X BUTTON -->
 <button class="remove-btn" onclick="removeSection(this)">×</button>
 
 <div>
@@ -166,27 +166,27 @@ input, select {
 function addSection(){
     const clone = document.querySelector(".section").cloneNode(true);
 
-    clone.querySelectorAll("input").forEach(i=>i.value="");
-    clone.querySelectorAll("select").forEach(s=>{
-        s.selectedIndex=0;
-        if(s.classList.contains("brand")){
+    clone.querySelectorAll("input").forEach(i => i.value = "");
+    clone.querySelectorAll("select").forEach(s => {
+        s.selectedIndex = 0;
+        if (s.classList.contains("brand")) {
             s.innerHTML = "<option>Select peripheral first</option>";
-            s.disabled=true;
+            s.disabled = true;
         }
     });
 
-    clone.querySelector(".Description").innerHTML="";
+    clone.querySelector(".Description").innerHTML = "";
 
     document.getElementById("sections").appendChild(clone);
 
     toggleRemoveButtons();
 }
 
-/* REMOVE */
+/* REMOVE SECTION */
 function removeSection(btn){
-    const sections=document.querySelectorAll(".section");
+    const sections = document.querySelectorAll(".section");
 
-    if(sections.length===1){
+    if (sections.length === 1) {
         alert("At least one required");
         return;
     }
@@ -195,17 +195,22 @@ function removeSection(btn){
     toggleRemoveButtons();
 }
 
-/* TOGGLE */
+/* REMOVE BUTTON CONTROL */
 function toggleRemoveButtons(){
-    const sections=document.querySelectorAll(".section");
+    const sections = document.querySelectorAll(".section");
 
-    sections.forEach(sec=>{
-        const btn=sec.querySelector(".remove-btn");
-        btn.style.display = sections.length===1 ? "none":"block";
+    sections.forEach((sec, index) => {
+        const btn = sec.querySelector(".remove-btn");
+
+        if (index === 0) {
+            btn.style.display = "none";
+        } else {
+            btn.style.display = sections.length > 1 ? "block" : "none";
+        }
     });
 }
 
-/* BRAND */
+/* BRAND (RESTORED) */
 function updateBrand(sel){
     const section = sel.closest(".section");
     const brandSelect = section.querySelector(".brand");
@@ -245,27 +250,29 @@ function updateBrand(sel){
 
 /* ITEMS */
 function generateItems(input){
-    const section=input.closest(".section");
-    const count=parseInt(input.value)||0;
-    const container=section.querySelector(".Description");
+    const section = input.closest(".section");
+    const count = parseInt(input.value) || 0;
+    const container = section.querySelector(".Description");
 
-    container.innerHTML="";
+    container.innerHTML = "";
 
-    for(let i=1;i<=count;i++){
-        const wrap=document.createElement("div");
-        wrap.className="item-group";
+    for (let i = 1; i <= count; i++) {
+        const wrap = document.createElement("div");
+        wrap.className = "item-group";
 
-        wrap.innerHTML=`
-        <label>Serial ${i}</label>
-        <input>
-        <label>Description ${i}</label>
-        <input>
-        <label>Remark ${i}</label>
-        <select>
-            <option>Good</option>
-            <option>Defective</option>
-            <option>For Repair</option>
-        </select>
+        wrap.innerHTML = `
+            <label>Serial ${i}</label>
+            <input>
+
+            <label>Description ${i}</label>
+            <input>
+
+            <label>Remark ${i}</label>
+            <select>
+                <option>Good</option>
+                <option>Defective</option>
+                <option>For Repair</option>
+            </select>
         `;
 
         container.appendChild(wrap);
@@ -277,41 +284,45 @@ function exportPDF(){
     const { jsPDF } = window.jspdf;
     const pdf = new jsPDF("l");
 
-    const grouped={Good:[],Defective:[], "For Repair":[]};
+    const grouped = {
+        Good: [],
+        Defective: [],
+        "For Repair": []
+    };
 
-    document.querySelectorAll(".section").forEach(sec=>{
-        const eq=sec.querySelector(".Peripherals").value;
-        const brand=sec.querySelector(".brand").value;
+    document.querySelectorAll(".section").forEach(sec => {
+        const eq = sec.querySelector(".Peripherals").value;
+        const brand = sec.querySelector(".brand").value;
 
-        const inputs=sec.querySelectorAll(".Description input");
-        const selects=sec.querySelectorAll(".Description select");
+        const inputs = sec.querySelectorAll(".Description input");
+        const selects = sec.querySelectorAll(".Description select");
 
-        let r=0;
+        let r = 0;
 
-        for(let i=0;i<inputs.length;i+=2){
-            const serial=inputs[i].value;
-            const desc=inputs[i+1].value;
-            const remark=selects[r].value;
+        for (let i = 0; i < inputs.length; i += 2) {
+            const serial = inputs[i].value;
+            const desc = inputs[i + 1].value;
+            const remark = selects[r].value;
 
-            grouped[remark].push([eq,brand,serial,desc]);
+            grouped[remark].push([eq, brand, serial, desc]);
             r++;
         }
     });
 
-    let y=20;
+    let y = 20;
 
-    for(let key in grouped){
-        if(grouped[key].length){
-            pdf.text(key,10,y);
-            y+=5;
+    for (let key in grouped) {
+        if (grouped[key].length) {
+            pdf.text(key, 10, y);
+            y += 5;
 
             pdf.autoTable({
-                startY:y,
-                head:[["Equipment","Brand","Serial","Description"]],
-                body:grouped[key]
+                startY: y,
+                head: [["Equipment", "Brand", "Serial", "Description"]],
+                body: grouped[key]
             });
 
-            y=pdf.lastAutoTable.finalY+10;
+            y = pdf.lastAutoTable.finalY + 10;
         }
     }
 
