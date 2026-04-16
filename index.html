@@ -29,6 +29,7 @@ body {
 
 /* SECTION */
 .section {
+    position: relative; /* ✅ needed for X positioning */
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 15px;
@@ -43,14 +44,14 @@ body {
     grid-column: span 2;
 }
 
-/* ✅ FIXED GRID */
+/* GRID */
 .Description {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 15px;
 }
 
-/* ✅ ITEM CARD FIX */
+/* ITEM */
 .item-group {
     background: rgba(255,255,255,0.15);
     padding: 12px;
@@ -59,18 +60,6 @@ body {
     flex-direction: column;
     gap: 6px;
     border: 1px solid rgba(255,255,255,0.2);
-}
-
-/* CLEANER INPUT LOOK */
-.item-group label {
-    font-size: 12px;
-    opacity: 0.85;
-}
-
-.item-group input,
-.item-group select {
-    padding: 6px;
-    font-size: 13px;
 }
 
 /* INPUTS */
@@ -91,13 +80,29 @@ input, select {
     cursor: pointer;
 }
 
+/* ✅ NEW REMOVE BUTTON STYLE (X TOP RIGHT) */
 .remove-btn {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+
     background: red;
     color: white;
-    padding: 5px;
     border: none;
     cursor: pointer;
-    margin-bottom: 10px;
+
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 28px;
+    text-align: center;
+}
+
+.remove-btn:hover {
+    background: darkred;
 }
 
 /* MOBILE */
@@ -116,18 +121,19 @@ input, select {
 
 <div class="section">
 
-<button class="remove-btn" onclick="removeSection(this)">Remove</button>
+<!-- ✅ ONLY X BUTTON -->
+<button class="remove-btn" onclick="removeSection(this)">×</button>
 
 <div>
 <label>Equipment</label>
 <select class="Peripherals" onchange="updateBrand(this)">
 <option value="">Select</option>
-<option>Computer</option>
-<option>Keyboard</option>
-<option>Monitor</option>
-<option>UPS</option>
-<option>Cash Drawer</option>
-<option>Hard Drive</option>
+<option value="Computer">Computer</option>
+<option value="Keyboard">Keyboard</option>
+<option value="Monitor">Monitor</option>
+<option value="UPS">UPS</option>
+<option value="Cash Drawer">Cash Drawer</option>
+<option value="Hard Drive">Hard Drive</option>
 </select>
 </div>
 
@@ -164,6 +170,7 @@ function addSection(){
     clone.querySelectorAll("select").forEach(s=>{
         s.selectedIndex=0;
         if(s.classList.contains("brand")){
+            s.innerHTML = "<option>Select peripheral first</option>";
             s.disabled=true;
         }
     });
@@ -188,7 +195,7 @@ function removeSection(btn){
     toggleRemoveButtons();
 }
 
-/* TOGGLE REMOVE */
+/* TOGGLE */
 function toggleRemoveButtons(){
     const sections=document.querySelectorAll(".section");
 
@@ -200,9 +207,40 @@ function toggleRemoveButtons(){
 
 /* BRAND */
 function updateBrand(sel){
-    const brand=sel.closest(".section").querySelector(".brand");
-    brand.disabled=false;
-    brand.innerHTML="<option>Brand A</option><option>Brand B</option>";
+    const section = sel.closest(".section");
+    const brandSelect = section.querySelector(".brand");
+
+    brandSelect.innerHTML = "";
+
+    const value = sel.value;
+
+    if (!value) {
+        brandSelect.disabled = true;
+        brandSelect.innerHTML = "<option>Select peripheral first</option>";
+        return;
+    }
+
+    brandSelect.disabled = false;
+
+    let brands = [];
+
+    if (value === "Computer") brands = ["Dell", "HP", "Lenovo", "Asus"];
+    else if (value === "Keyboard") brands = ["Logitech", "Razer", "Corsair"];
+    else if (value === "Monitor") brands = ["Samsung", "LG", "AOC"];
+    else if (value === "UPS") brands = ["APC", "CyberPower"];
+    else if (value === "Cash Drawer") brands = ["Epson", "Star Micronics"];
+    else if (value === "Hard Drive") brands = ["Seagate", "Western Digital"];
+
+    const defaultOption = document.createElement("option");
+    defaultOption.textContent = "-- Select Brand --";
+    brandSelect.appendChild(defaultOption);
+
+    brands.forEach(b => {
+        const o = document.createElement("option");
+        o.value = b;
+        o.textContent = b;
+        brandSelect.appendChild(o);
+    });
 }
 
 /* ITEMS */
