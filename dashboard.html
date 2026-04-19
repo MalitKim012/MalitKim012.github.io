@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard</title>
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #66bb6a, #ff8c42);
+}
+
+/* Glow effect */
+.bg-glow {
+    position: fixed;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(255,255,255,0.3), transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+}
+
+/* Header */
+.header {
+    position: relative;
+    z-index: 2;
+    padding: 15px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255,255,255,0.3);
+}
+
+.header h2 {
+    color: white;
+    margin: 0;
+}
+
+/* Logout button */
+.logout-btn {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 8px;
+    background: #ff4d4d;
+    color: white;
+    cursor: pointer;
+}
+
+.logout-btn:hover {
+    background: #e63939;
+}
+
+/* Dashboard grid */
+.dashboard {
+    position: relative;
+    z-index: 2;
+    padding: 30px;
+
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+/* Cards */
+.card {
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(12px);
+    border-radius: 16px;
+    padding: 20px;
+    color: white;
+
+    border: 1px solid rgba(255,255,255,0.3);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    background: rgba(255,255,255,0.25);
+}
+
+.card h3 {
+    margin-top: 0;
+}
+
+/* Footer */
+.footer {
+    text-align: center;
+    padding: 10px;
+    color: white;
+    opacity: 0.7;
+}
+</style>
+</head>
+
+<body>
+
+<div class="bg-glow"></div>
+
+<!-- HEADER -->
+<div class="header">
+    <h2>Dashboard</h2>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+</div>
+
+<!-- DASHBOARD -->
+<div class="dashboard">
+
+    <div class="card" onclick="goToForm()">
+        <h3>📄 Pull Out Form</h3>
+        <p>Create and export pull out reports.</p>
+    </div>
+
+    <div class="card" onclick="comingSoon()">
+        <h3>📊 Reports</h3>
+        <p>View previous records (coming soon).</p>
+    </div>
+
+    <div class="card" onclick="comingSoon()">
+        <h3>⚙ Settings</h3>
+        <p>Manage system preferences.</p>
+    </div>
+
+</div>
+
+<div class="footer">
+    Simple Inventory System
+</div>
+
+<script>
+
+/* Glow follow */
+const glow = document.querySelector(".bg-glow");
+
+document.addEventListener("mousemove", (e) => {
+    glow.style.left = e.clientX + "px";
+    glow.style.top = e.clientY + "px";
+});
+
+/* Navigation */
+function goToForm(){
+    window.location.href = "Pullout.html"; // 🔁 change to your actual file name
+}
+
+/* Logout */
+function logout(){
+    window.location.href = "login.html"; // 🔁 change if needed
+}
+
+/* Placeholder */
+function comingSoon(){
+    alert("Feature coming soon");
+}
+
+</script>
+
+</body>
+</html>
