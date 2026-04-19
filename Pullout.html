@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PULL OUT FORM</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background: linear-gradient(135deg, #66bb6a, #ff8c42);
+}
+
+/* CONTAINER */
+.container {
+    width: 95%;
+    max-width: 1100px;
+    margin: 30px auto;
+    padding: 20px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 12px;
+}
+
+/* SECTION */
+.section {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 10px;
+}
+
+.Quantity,
+.Description {
+    grid-column: span 2;
+}
+
+/* GRID FIX */
+.Description {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
+}
+
+/* ITEM CARD */
+.item-group {
+    background: rgba(255,255,255,0.15);
+    padding: 12px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+/* INPUTS */
+input, select {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+}
+
+/* BUTTONS */
+.btn {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    background: #ff8c42;
+    border: none;
+    color: white;
+    cursor: pointer;
+}
+
+/* REMOVE BUTTON (X) */
+.remove-btn {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+
+    background: red;
+    color: white;
+    border: none;
+    cursor: pointer;
+
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 28px;
+    text-align: center;
+}
+
+.remove-btn:hover {
+    background: darkred;
+}
+
+/* MOBILE */
+@media(max-width:768px){
+    .section { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+<h2>PULL OUT FORM</h2>
+
+<div id="sections">
+
+<!-- FIRST SECTION (NO REMOVE BUTTON VISIBLE) -->
+<div class="section">
+
+<button class="remove-btn" onclick="removeSection(this)">×</button>
+
+<div>
+<label>Equipment</label>
+<select class="Peripherals" onchange="updateBrand(this)">
+<option value="">Select</option>
+<option value="Computer">Computer</option>
+<option value="Keyboard">Keyboard</option>
+<option value="Monitor">Monitor</option>
+<option value="UPS">UPS</option>
+<option value="Cash Drawer">Cash Drawer</option>
+<option value="Hard Drive">Hard Drive</option>
+</select>
+</div>
+
+<div>
+<label>Brand</label>
+<select class="brand" disabled>
+<option>Select first</option>
+</select>
+</div>
+
+<div class="Quantity">
+<label>Quantity</label>
+<input type="number" oninput="generateItems(this)">
+</div>
+
+<div class="Description"></div>
+
+</div>
+
+</div>
+
+<button class="btn" onclick="addSection()">+ Add Peripheral</button>
+<button class="btn" onclick="exportPDF()">Export PDF</button>
+
+</div>
+
+<script>
+
+/* ADD SECTION */
+function addSection(){
+    const clone = document.querySelector(".section").cloneNode(true);
+
+    clone.querySelectorAll("input").forEach(i => i.value = "");
+    clone.querySelectorAll("select").forEach(s => {
+        s.selectedIndex = 0;
+        if (s.classList.contains("brand")) {
+            s.innerHTML = "<option>Select peripheral first</option>";
+            s.disabled = true;
+        }
+    });
+
+    clone.querySelector(".Description").innerHTML = "";
+
+    document.getElementById("sections").appendChild(clone);
+
+    toggleRemoveButtons();
+}
+
+/* REMOVE SECTION */
+function removeSection(btn){
+    const sections = document.querySelectorAll(".section");
+
+    if (sections.length === 1) {
+        alert("At least one required");
+        return;
+    }
+
+    btn.closest(".section").remove();
+    toggleRemoveButtons();
+}
+
+/* REMOVE BUTTON CONTROL */
+function toggleRemoveButtons(){
+    const sections = document.querySelectorAll(".section");
+
+    sections.forEach((sec, index) => {
+        const btn = sec.querySelector(".remove-btn");
+
+        if (index === 0) {
+            btn.style.display = "none";
+        } else {
+            btn.style.display = sections.length > 1 ? "block" : "none";
+        }
+    });
+}
+
+/* BRAND (RESTORED) */
+function updateBrand(sel){
+    const section = sel.closest(".section");
+    const brandSelect = section.querySelector(".brand");
+
+    brandSelect.innerHTML = "";
+
+    const value = sel.value;
+
+    if (!value) {
+        brandSelect.disabled = true;
+        brandSelect.innerHTML = "<option>Select peripheral first</option>";
+        return;
+    }
+
+    brandSelect.disabled = false;
+
+    let brands = [];
+
+    if (value === "Computer") brands = ["Dell", "HP", "Lenovo", "Asus"];
+    else if (value === "Keyboard") brands = ["Logitech", "Razer", "Corsair"];
+    else if (value === "Monitor") brands = ["Samsung", "LG", "AOC"];
+    else if (value === "UPS") brands = ["APC", "CyberPower"];
+    else if (value === "Cash Drawer") brands = ["Epson", "Star Micronics"];
+    else if (value === "Hard Drive") brands = ["Seagate", "Western Digital"];
+
+    const defaultOption = document.createElement("option");
+    defaultOption.textContent = "-- Select Brand --";
+    brandSelect.appendChild(defaultOption);
+
+    brands.forEach(b => {
+        const o = document.createElement("option");
+        o.value = b;
+        o.textContent = b;
+        brandSelect.appendChild(o);
+    });
+}
+
+/* ITEMS */
+function generateItems(input){
+    const section = input.closest(".section");
+    const count = parseInt(input.value) || 0;
+    const container = section.querySelector(".Description");
+
+    container.innerHTML = "";
+
+    for (let i = 1; i <= count; i++) {
+        const wrap = document.createElement("div");
+        wrap.className = "item-group";
+
+        wrap.innerHTML = `
+            <label>Serial ${i}</label>
+            <input>
+
+            <label>Description ${i}</label>
+            <input>
+
+            <label>Remark ${i}</label>
+            <select>
+                <option>Good</option>
+                <option>Defective</option>
+                <option>For Repair</option>
+            </select>
+        `;
+
+        container.appendChild(wrap);
+    }
+}
+
+/* PDF EXPORT */
+function exportPDF(){
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF("l");
+
+    const grouped = {
+        Good: [],
+        Defective: [],
+        "For Repair": []
+    };
+
+    document.querySelectorAll(".section").forEach(sec => {
+        const eq = sec.querySelector(".Peripherals").value;
+        const brand = sec.querySelector(".brand").value;
+
+        const inputs = sec.querySelectorAll(".Description input");
+        const selects = sec.querySelectorAll(".Description select");
+
+        let r = 0;
+
+        for (let i = 0; i < inputs.length; i += 2) {
+            const serial = inputs[i].value;
+            const desc = inputs[i + 1].value;
+            const remark = selects[r].value;
+
+            grouped[remark].push([eq, brand, serial, desc]);
+            r++;
+        }
+    });
+
+    let y = 20;
+
+    for (let key in grouped) {
+        if (grouped[key].length) {
+            pdf.text(key, 10, y);
+            y += 5;
+
+            pdf.autoTable({
+                startY: y,
+                head: [["Equipment", "Brand", "Serial", "Description"]],
+                body: grouped[key]
+            });
+
+            y = pdf.lastAutoTable.finalY + 10;
+        }
+    }
+
+    pdf.save("report.pdf");
+}
+
+/* INIT */
+toggleRemoveButtons();
+
+</script>
+
+</body>
+</html>
